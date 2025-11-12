@@ -23,15 +23,15 @@
 ### Installation
 ```bash
 # Method 1: Quick Install Script
-curl -sSL https://raw.githubusercontent.com/YOUR_USERNAME/suture/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/GayanWijewardhane/suture/main/install.sh | bash
 
 # Method 2: Manual Install
-git clone https://github.com/YOUR_USERNAME/suture.git
+git clone https://github.com/GayanWijewardhane/suture.git
 cd suture
 pip3 install --user .
 
 # Method 3: Docker
-docker pull YOUR_USERNAME/suture:latest
+docker pull GayanWijewardhane/suture:latest
 ```
 
 ### Basic Usage
@@ -94,9 +94,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/suture/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/suture/discussions)
-- **Email**: your.email@example.com
+- **Issues**: [GitHub Issues](https://github.com/GayanWijewardhane/suture/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/GayanWijewardhane/suture/discussions)
+- **Email**: gayanwijewardhanehmi@gmail.com
 
 ---
 
