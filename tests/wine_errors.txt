@@ -1,0 +1,4 @@
+002c:err:module:import_dll Library MSVCP140.dll required by L"C:\\Program Files\\App\\app.exe" not found
+002c:err:module:LdrInitializeThunk Importing dlls for L"C:\\Program Files\\App\\app.exe" failed, status c0000135
+0024:err:d3d:wined3d_adapter_gl_init Failed to initialize OpenGL driver
+wine: could not load wine prefix at /home/user/.wine

@@ -1,0 +1,245 @@
+version: "1.0"
+rules:
+  - id: "ERR001"
+    name: "Permission Denied"
+    pattern: '(?i)permission denied'
+    severity: "high"
+    category: "filesystem"
+    explanation: "The operation failed because you don't have sufficient permissions to access the file or directory."
+    solutions:
+      - "Check file permissions: ls -la <file>"
+      - "Run with sudo if appropriate: sudo <command>"
+      - "Change ownership: sudo chown $USER:$USER <file>"
+      - "Modify permissions: sudo chmod +x <file>"
+    
+  - id: "ERR002"
+    name: "Command Not Found"
+    pattern: '(?i)(command not found|bash: .+: command not found)'
+    severity: "medium"
+    category: "command"
+    explanation: "The command you're trying to run is not installed or not in your PATH."
+    solutions:
+      - "Search for package: dnf search <command>"
+      - "Install package: sudo dnf install <package>"
+      - "Check PATH: echo $PATH"
+      - "Verify installation: which <command>"
+    
+  - id: "ERR003"
+    name: "No Space Left on Device"
+    pattern: '(?i)no space left on device'
+    severity: "critical"
+    category: "storage"
+    explanation: "Your disk is full and cannot write any more data."
+    solutions:
+      - "Check disk usage: df -h"
+      - "Find large files: du -sh /* | sort -h"
+      - "Clean package cache: sudo dnf clean all"
+      - "Remove old logs: sudo journalctl --vacuum-time=7d"
+    
+  - id: "ERR004"
+    name: "File Not Found"
+    pattern: '(?i)(no such file or directory|cannot find)'
+    severity: "medium"
+    category: "filesystem"
+    explanation: "The specified file or directory does not exist at the given path."
+    solutions:
+      - "Verify path: ls -la <directory>"
+      - "Check spelling and case sensitivity"
+      - "Use find command: find / -name <filename> 2>/dev/null"
+      - "Check if file was moved or deleted"
+    
+  - id: "ERR005"
+    name: "Port Already in Use"
+    pattern: '(?i)(address already in use|port .* already in use|bind.*failed)'
+    severity: "medium"
+    category: "network"
+    explanation: "Another process is already using the requested network port."
+    solutions:
+      - "Find process using port: sudo lsof -i :<port>"
+      - "Kill process: sudo kill -9 <PID>"
+      - "Use different port in configuration"
+      - "Check with netstat: sudo netstat -tulpn | grep <port>"
+
+  - id: "WINE001"
+    name: "Wine Missing DLL"
+    pattern: '(?i)(could not load|cannot find).*(\.dll|dll file)'
+    severity: "high"
+    category: "wine"
+    explanation: "Wine cannot find a required Windows DLL file needed to run the application."
+    solutions:
+      - "Install missing DLL: winetricks <dllname>"
+      - "Copy DLL to system32: cp <dll> ~/.wine/drive_c/windows/system32/"
+      - "Use winetricks to install vcrun: winetricks vcrun2019"
+      - "Check Wine prefix: echo $WINEPREFIX"
+  
+  - id: "WINE002"
+    name: "Wine Graphics Driver Issue"
+    pattern: '(?i)(opengl|d3d|vulkan).*(error|failed|not supported)'
+    severity: "high"
+    category: "wine"
+    explanation: "Graphics driver or API compatibility issue with Wine."
+    solutions:
+      - "Install graphics drivers: sudo dnf install mesa-dri-drivers"
+      - "Enable DXVK: winetricks dxvk"
+      - "Check Vulkan support: vulkaninfo"
+      - "Update Wine to latest version"
+  
+  - id: "WINE003"
+    name: "Wine Prefix Error"
+    pattern: '(?i)wine: (could not|cannot) (load|create) (wine prefix|wineprefix)'
+    severity: "critical"
+    category: "wine"
+    explanation: "Wine cannot create or access the Wine prefix directory."
+    solutions:
+      - "Create new prefix: WINEPREFIX=~/.wine wineboot"
+      - "Check permissions: ls -la ~/.wine"
+      - "Remove corrupted prefix: rm -rf ~/.wine && wineboot"
+      - "Set custom prefix: export WINEPREFIX=~/custom_wine"
+
+  - id: "NET001"
+    name: "Network Unreachable"
+    pattern: '(?i)(network is unreachable|no route to host)'
+    severity: "high"
+    category: "network"
+    explanation: "Unable to reach the network or remote host."
+    solutions:
+      - "Check network connection: ip link show"
+      - "Check routes: ip route show"
+      - "Restart NetworkManager: sudo systemctl restart NetworkManager"
+      - "Check firewall: sudo firewall-cmd --list-all"
+  
+  - id: "NET002"
+    name: "DNS Resolution Failed"
+    pattern: '(?i)(could not resolve|name or service not known|dns.*fail)'
+    severity: "medium"
+    category: "network"
+    explanation: "DNS name resolution is failing."
+    solutions:
+      - "Check DNS: cat /etc/resolv.conf"
+      - "Test DNS: nslookup google.com"
+      - "Flush DNS cache: sudo systemd-resolve --flush-caches"
+      - "Use alternative DNS: echo 'nameserver 8.8.8.8' | sudo tee -a /etc/resolv.conf"
+  
+  - id: "SVC001"
+    name: "Service Failed to Start"
+    pattern: '(?i)(failed to start|service.*failed|start.*failed)'
+    severity: "high"
+    category: "service"
+    explanation: "A system service failed to start properly."
+    solutions:
+      - "Check service status: systemctl status <service>"
+      - "View logs: journalctl -u <service> -n 50"
+      - "Check configuration: systemctl cat <service>"
+      - "Restart service: sudo systemctl restart <service>"
+  
+  - id: "DB001"
+    name: "Database Connection Failed"
+    pattern: '(?i)(could not connect to database|connection refused.*database|database.*not.*running)'
+    severity: "critical"
+    category: "database"
+    explanation: "Unable to connect to the database server."
+    solutions:
+      - "Check if DB is running: systemctl status postgresql/mariadb"
+      - "Test connection: psql/mysql -h localhost"
+      - "Check port: sudo netstat -tulpn | grep 5432/3306"
+      - "Review DB logs: journalctl -u postgresql"
+  
+  - id: "KERN001"
+    name: "Out of Memory"
+    pattern: '(?i)(out of memory|oom|memory exhausted)'
+    severity: "critical"
+    category: "kernel"
+    explanation: "System has run out of available memory."
+    solutions:
+      - "Check memory: free -h"
+      - "Find memory hogs: ps aux --sort=-%mem | head"
+      - "Check for memory leaks in applications"
+      - "Add swap space or increase RAM"
+  
+  - id: "KERN002"
+    name: "I/O Error"
+    pattern: '(?i)(i/o error|input/output error|disk.*error)'
+    severity: "critical"
+    category: "kernel"
+    explanation: "Hardware I/O error detected, possibly disk failure."
+    solutions:
+      - "Check disk health: sudo smartctl -a /dev/sda"
+      - "Check dmesg: dmesg | grep -i error"
+      - "Run filesystem check: sudo fsck /dev/sda1 (unmounted)"
+      - "Backup data immediately if possible"
+
+  # Network Errors
+  - id: "NET001"
+    name: "Network Unreachable"
+    pattern: "(?i)(network is unreachable|no route to host)"
+    severity: "high"
+    category: "network"
+    explanation: "Unable to reach the network or remote host."
+    solutions:
+      - "Check network connection: ip link show"
+      - "Check routes: ip route show"
+      - "Restart NetworkManager: sudo systemctl restart NetworkManager"
+      - "Check firewall: sudo firewall-cmd --list-all"
+  
+  - id: "NET002"
+    name: "DNS Resolution Failed"
+    pattern: "(?i)(could not resolve|name or service not known|dns.*fail)"
+    severity: "medium"
+    category: "network"
+    explanation: "DNS name resolution is failing."
+    solutions:
+      - "Check DNS: cat /etc/resolv.conf"
+      - "Test DNS: nslookup google.com"
+      - "Flush DNS cache: sudo systemd-resolve --flush-caches"
+      - "Use alternative DNS: echo 'nameserver 8.8.8.8' | sudo tee -a /etc/resolv.conf"
+  
+  # Process/Service Errors
+  - id: "SVC001"
+    name: "Service Failed to Start"
+    pattern: "(?i)(failed to start|service.*failed|start.*failed)"
+    severity: "high"
+    category: "service"
+    explanation: "A system service failed to start properly."
+    solutions:
+      - "Check service status: systemctl status <service>"
+      - "View logs: journalctl -u <service> -n 50"
+      - "Check configuration: systemctl cat <service>"
+      - "Restart service: sudo systemctl restart <service>"
+  
+  # Database Errors
+  - id: "DB001"
+    name: "Database Connection Failed"
+    pattern: "(?i)(could not connect to database|connection refused.*database|database.*not.*running)"
+    severity: "critical"
+    category: "database"
+    explanation: "Unable to connect to the database server."
+    solutions:
+      - "Check if DB is running: systemctl status postgresql/mariadb"
+      - "Test connection: psql/mysql -h localhost"
+      - "Check port: sudo netstat -tulpn | grep 5432/3306"
+      - "Review DB logs: journalctl -u postgresql"
+  
+  # Kernel/Hardware Errors
+  - id: "KERN001"
+    name: "Out of Memory"
+    pattern: "(?i)(out of memory|oom|memory exhausted)"
+    severity: "critical"
+    category: "kernel"
+    explanation: "System has run out of available memory."
+    solutions:
+      - "Check memory: free -h"
+      - "Find memory hogs: ps aux --sort=-%mem | head"
+      - "Check for memory leaks in applications"
+      - "Add swap space or increase RAM"
+  
+  - id: "KERN002"
+    name: "I/O Error"
+    pattern: "(?i)(i/o error|input/output error|disk.*error)"
+    severity: "critical"
+    category: "kernel"
+    explanation: "Hardware I/O error detected, possibly disk failure."
+    solutions:
+      - "Check disk health: sudo smartctl -a /dev/sda"
+      - "Check dmesg: dmesg | grep -i error"
+      - "Run filesystem check: sudo fsck /dev/sda1 (unmounted)"
+      - "Backup data immediately if possible"

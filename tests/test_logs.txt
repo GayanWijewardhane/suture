@@ -1,0 +1,8 @@
+[2024-11-11 10:15:23] ERROR: Permission denied while accessing /var/log/system.log
+[2024-11-11 10:16:45] bash: python3.12: command not found
+[2024-11-11 10:17:12] FATAL: No space left on device
+[2024-11-11 10:18:33] WARNING: Cannot open file: No such file or directory
+[2024-11-11 10:19:01] ERROR: bind: Address already in use (port 8080)
+[2024-11-11 10:20:15] INFO: System started successfully
+[Tue Nov 11 11:35:25 AM +0530 2025] ERROR: Permission denied
+[Tue Nov 11 11:35:48 AM +0530 2025] ERROR: Permission denied

@@ -1,0 +1,21 @@
+--- health.py.old
++++ health.py
+@@ -110,7 +110,13 @@
+             return HealthCheck(
+                 name="Failed Services",
+                 status="warning",
+                 message="Unable to check systemd services"
+             )
+         
+-        failed_services = [line.split()[0] for line in stdout.strip().split('\n') if line.strip()]
++        # Parse failed services - skip the bullet point and get service name
++        failed_services = []
++        for line in stdout.strip().split('\n'):
++            if line.strip():
++                parts = line.split()
++                # Skip the bullet point (●) and get the service name
++                service_name = parts[1] if len(parts) > 1 and parts[0] == '●' else parts[0]
++                if service_name and service_name != '●':
++                    failed_services.append(service_name)
+         
+         if failed_services:
