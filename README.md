@@ -6,7 +6,7 @@
 
 > Intelligent error detection and remediation system for Linux that analyzes console output, log files, and system health to provide actionable solutions.
 
-![Suture Demo](https://via.placeholder.com/800x400?text=Suture+Demo+Screenshot)
+
 
 ## ✨ Features
 
